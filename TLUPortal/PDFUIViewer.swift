@@ -17,6 +17,7 @@ struct PDFUIViewer: View {
     init(title_name: String, document_name: String) {
         self.title_name = title_name
         self.document_name = document_name
+        self._zoomScale = State(initialValue: 1.0)
     }
     
     var pdfURL: URL? { Bundle.main.url(forResource: document_name, withExtension: "pdf")
@@ -28,6 +29,9 @@ struct PDFUIViewer: View {
     
     // Auto scroll to top when the view appear
     @State private var scrollToTop: Bool = false
+    
+    // Animation
+    @State private var animateGradient = false
     
     // Limit of scale to prevent infinity scale
     private var minScale: CGFloat = 1.0
@@ -51,36 +55,48 @@ struct PDFUIViewer: View {
     }
     
     var body: some View {
-        VStack {
-            GeometryReader { geometry in
-                PDFKitView(url: pdfURL!, scrollToTop: $scrollToTop)
-                    .scaleEffect(scale)
-                    .onAppear {
-                        scrollToTop = true
-                    }
-                    .gesture(
-                        MagnificationGesture()
-                            .updating($scale) { value, gestureState, _ in
-                                gestureState = value.magnitude
-                            }
-                            .onChanged { value in
-                                let newScale = zoomScale * value.magnitude
-                                
-                                zoomScale = min(maxScale, max(minScale, newScale))
-                            }
-                    )
-                    .edgesIgnoringSafeArea(.bottom)
-                    .frame(width: geometry.size.width, height: geometry.size.height)
-            } // End of GeometryReader
-        } // End of VStack
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                btnBack
-            }
+        ZStack {
+            LinearGradient(colors: [.blue, .purple, .orange], startPoint: .topLeading, endPoint: .bottomTrailing)
+                .hueRotation(.degrees(animateGradient ? 45 : 0))
+                .ignoresSafeArea()
             
-            ToolbarItem(placement: .principal) {
-                title
+            VStack {
+                GeometryReader { geometry in
+                    PDFKitView(url: pdfURL!, scrollToTop: $scrollToTop)
+                        .scaleEffect(scale)
+                        .onAppear {
+                            scrollToTop = true
+                        }
+                        .gesture(
+                            MagnificationGesture()
+                                .updating($scale) { value, gestureState, _ in
+                                    gestureState = value.magnitude
+                                }
+                                .onChanged { value in
+                                    let newScale = zoomScale * value.magnitude
+                                    
+                                    zoomScale = min(maxScale, max(minScale, newScale))
+                                }
+                        )
+                        .edgesIgnoringSafeArea(.bottom)
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                } // End of GeometryReader
+            } // End of VStack
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    btnBack
+                        .foregroundColor(.white)
+                }
+                
+                ToolbarItem(placement: .principal) {
+                    title
+                        .foregroundColor(.white)
+                }
+            }
+        }.onAppear {
+            withAnimation(.easeInOut(duration: 5.0).repeatForever(autoreverses: true)) {
+                animateGradient.toggle()
             }
         }
     }

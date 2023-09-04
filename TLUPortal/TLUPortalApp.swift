@@ -12,6 +12,7 @@ struct TLUPortalApp: App {
     var body: some Scene {
         WindowGroup {
             SplashView()
+//            AboutApp()
         }
     }
 }

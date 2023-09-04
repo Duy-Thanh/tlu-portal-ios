@@ -10,8 +10,8 @@ import SwiftUI
 
 func loginAPI(login: TLUPortalPublishedVariables, completion: @escaping (String?) -> Void) async {
 #if DEBUG
-    print("user_login: \(login.username)")
-    print("user_password: \(login.password)")
+    print("user_login: \(generate_hash(str_input: login.username)!)")
+    print("user_password: \(generate_hash(str_input: login.password)!)")
 #endif
     
     let client_id = "&client_id=education_client"

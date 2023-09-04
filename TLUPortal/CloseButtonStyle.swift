@@ -13,6 +13,6 @@ struct CloseButtonStyleCustom: ButtonStyle {
     
     func makeBody(configuration: Configuration) -> some View {
         Image(systemName: "xmark.circle")
-            .foregroundColor(.gray)
+            .foregroundColor(.white)
     }
 }

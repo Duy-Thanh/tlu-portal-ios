@@ -33,66 +33,103 @@ struct UserInfoView: View {
     @State private var dateOfBirth: String = ""
     @State private var genderSelection: String = "Male"
     
+    @State private var animateGradient = false
+    
     @State private var labelHeight = CGFloat.zero
     
-    @StateObject var gender_object = TLUPortalPublishedVariables()
+//    @StateObject var gender_object = TLUPortalPublishedVariables()
+    @EnvironmentObject var gender_object: TLUPortalPublishedVariables
     
     var body: some View {
         NavigationView {
-            VStack {
-                ScrollView(showsIndicators: false) {
-                    VStack {
-                        // User image
-                        Image(systemName: "person.circle.fill")
-                            .resizable()
-                            .frame(width: 100, height: 100)
-                            .foregroundColor(Color.blue)
-                            .padding()
-                        
-                        Spacer().frame(height: 28)
-                        
-                        // HStack for first name and last name
-                        HStack {
-                            // First name
-                            VStack {
-                                // First name label
-                                HStack {
-                                    Spacer().frame(width: 18)
+            ZStack {
+                LinearGradient(colors: [.blue, .purple, .orange], startPoint: .topLeading, endPoint: .bottomTrailing)
+                    .hueRotation(.degrees(animateGradient ? 45 : 0))
+                    .ignoresSafeArea()
+                
+                VStack {
+                    ScrollView(showsIndicators: false) {
+                        VStack {
+                            // User image
+                            Image(systemName: "person.circle.fill")
+                                .resizable()
+                                .frame(width: 100, height: 100)
+                                .foregroundColor(.white)
+                                .padding()
+                            
+                            Spacer().frame(height: 28)
+                            
+                            // HStack for first name and last name
+                            HStack {
+                                // First name
+                                VStack {
+                                    // First name label
+                                    HStack {
+                                        Spacer().frame(width: 18)
+                                        
+                                        // First name user input
+                                        Text("First Name")
+                                            .font(.system(size: 16))
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .frame(maxHeight: .infinity)
+                                    }
+                                    .frame(height: 10)
                                     
-                                    // First name user input
-                                    Text("First Name")
-                                        .font(.system(size: 16))
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .frame(maxHeight: .infinity)
+                                    TextField(text: $firstName, prompt: Text("First name")) {
+                                        Text("First name")
+                                    }
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .textFieldStyle(TextFieldStyleCustom())
+                                    .focused($focusedField, equals: .firstName)
+                                    .padding(12)
+                                    .frame(width: 210)
+                                    .toolbar {
+                                        // Show hide keyboard button
+                                        ToolbarItem(placement: .keyboard) {
+                                            Button(action: {
+                                                focusedField = nil
+                                            }) {
+                                                Image(systemName: "keyboard.chevron.compact.down")
+                                            } // End of ToolBar->Button
+                                        } // End of ToolBarItem
+                                    }
                                 }
-                                .frame(height: 10)
                                 
-                                TextField(text: $firstName, prompt: Text("First name")) {
-                                    Text("First name")
-                                }
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .textFieldStyle(TextFieldStyleCustom())
-                                .focused($focusedField, equals: .firstName)
-                                .padding(12)
-                                .frame(width: 210)
-                                .toolbar {
-                                    // Show hide keyboard button
-                                    ToolbarItem(placement: .keyboard) {
-                                        Button(action: {
-                                            focusedField = nil
-                                        }) {
-                                            Image(systemName: "keyboard.chevron.compact.down")
-                                        } // End of ToolBar->Button
-                                    } // End of ToolBarItem
+                                VStack {
+                                    // Last name label
+                                    HStack {
+                                        Spacer().frame(width: 4)
+                                        
+                                        Text("Last name")
+                                            .font(.system(size: 16))
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .frame(maxHeight: .infinity)
+                                            .padding(12)
+                                    }
+                                    .frame(height: 10)
+                                    
+                                    // Last name user input
+                                    TextField(text: $lastName, prompt: Text("Last name")) {
+                                        Text("Last name")
+                                    }
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .textFieldStyle(TextFieldStyleCustom())
+                                    .focused($focusedField, equals: .lastName)
+                                    .padding(12)
+                                    .frame(width: 210)
                                 }
                             }
                             
+                            Spacer().frame(height: 20)
+                            
+                            // Full name
                             VStack {
-                                // Last name label
+                                // Full name label
+                                
                                 HStack {
                                     Spacer().frame(width: 4)
                                     
-                                    Text("Last name")
+                                    Text("Full name")
                                         .font(.system(size: 16))
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                         .frame(maxHeight: .infinity)
@@ -100,100 +137,75 @@ struct UserInfoView: View {
                                 }
                                 .frame(height: 10)
                                 
-                                // Last name user input
-                                TextField(text: $lastName, prompt: Text("Last name")) {
-                                    Text("Last name")
+                                TextField(text: $fullName, prompt: Text("Full name")) {
+                                    Text("Full name")
                                 }
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 .textFieldStyle(TextFieldStyleCustom())
-                                .focused($focusedField, equals: .lastName)
+                                .focused($focusedField, equals: .fullName)
                                 .padding(12)
-                                .frame(width: 210)
                             }
-                        }
-                        
-                        Spacer().frame(height: 20)
-                        
-                        // Full name
-                        VStack {
-                            // Full name label
+                            
+                            Spacer().frame(height: 10)
                             
                             HStack {
-                                Spacer().frame(width: 4)
+                                // Gender label
                                 
-                                Text("Full name")
-                                    .font(.system(size: 16))
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .frame(maxHeight: .infinity)
-                                    .padding(12)
-                            }
-                            .frame(height: 10)
-                            
-                            TextField(text: $fullName, prompt: Text("Full name")) {
-                                Text("Full name")
-                            }
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .textFieldStyle(TextFieldStyleCustom())
-                            .focused($focusedField, equals: .fullName)
-                            .padding(12)
-                        }
-                        
-                        Spacer().frame(height: 10)
-                        
-                        HStack {
-                            // Gender label
-                            
-                            HStack {
-                                Spacer().frame(width: 4)
-                                
-                                Text("Gender: ")
-                                    .font(.system(size: 16))
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .frame(maxHeight: .infinity)
-                                    .frame(maxWidth: .infinity)
-                                    .padding(12)
-                            }
-                            .fixedSize(horizontal: false, vertical: true)
-                            
-                            // Last name user input
-                            DropDownMenuListCustom(genderObject: gender_object)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                HStack {
+                                    Spacer().frame(width: 4)
+                                    
+                                    Text("Gender: ")
+                                        .font(.system(size: 16))
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .frame(maxHeight: .infinity)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(12)
+                                }
                                 .fixedSize(horizontal: false, vertical: true)
-                        }
-                        
-                        Spacer().frame(height: 21)
-                        
-                        // Date of birth
-                        VStack {
-                            // Date of birth label
-                            
-                            HStack {
-                                Spacer().frame(width: 4)
                                 
-                                Text("Date of birth: ")
-                                    .font(.system(size: 16))
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .frame(maxHeight: .infinity)
-                                    .padding(12)
-                                    .frame(height: 16)
+                                // Last name user input
+                                DropDownMenuListCustom(genderObject: gender_object)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .fixedSize(horizontal: false, vertical: true)
                             }
-                            .frame(height: 10)
                             
-                            Spacer().frame(height: 20)
+                            Spacer().frame(height: 21)
                             
                             // Date of birth
-                            TextField(text: $dateOfBirth, prompt: Text("Date of birth")) {
-                                Text("Date of birth")
+                            VStack {
+                                // Date of birth label
+                                
+                                HStack {
+                                    Spacer().frame(width: 4)
+                                    
+                                    Text("Date of birth: ")
+                                        .font(.system(size: 16))
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .frame(maxHeight: .infinity)
+                                        .padding(12)
+                                        .frame(height: 16)
+                                }
+                                .frame(height: 10)
+                                
+                                Spacer().frame(height: 20)
+                                
+                                // Date of birth
+                                TextField(text: $dateOfBirth, prompt: Text("Date of birth")) {
+                                    Text("Date of birth")
+                                }
+                                .frame(maxWidth: .infinity, maxHeight: 28)
+                                .textFieldStyle(TextFieldStyleCustom())
+                                .focused($focusedField, equals: .dateOfBirth)
+                                .padding(12)
                             }
-                            .frame(maxWidth: .infinity, maxHeight: 28)
-                            .textFieldStyle(TextFieldStyleCustom())
-                            .focused($focusedField, equals: .dateOfBirth)
-                            .padding(12)
                         }
-
-                    }
-                } // End of ScrollView
-            } // End if VStack
+                    } // End of ScrollView
+                } // End if VStack
+            }.onAppear {
+                withAnimation(.easeInOut(duration: 5.0).repeatForever(autoreverses: true)) {
+                    animateGradient.toggle()
+                }
+            }
         } // End of NavigationView
     }
 }

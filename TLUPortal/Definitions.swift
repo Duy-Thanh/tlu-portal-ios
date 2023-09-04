@@ -25,6 +25,8 @@ struct PortalLogin: Decodable {
 }
 
 var SwiftErrorReturn: String = ""
+var SwiftErrorStatus: String = ""
+var SwiftErrorDescription: String = ""
 
 struct PortalLogin_Error: Decodable {
     var APIErrorReturn: String
