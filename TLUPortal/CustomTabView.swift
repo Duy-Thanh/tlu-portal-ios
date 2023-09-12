@@ -44,22 +44,7 @@ struct CustomTabView: View {
             .onPreferenceChange(Size.self, perform: { (v) in
                 self.playerFrame = v.last ?? .zero
                 print(self.playerFrame)
-            })
-//            .onAppear {
-//                let appearance = UITabBarAppearance()
-//                appearance.backgroundColor = UIColor.clear
-//                appearance.configureWithTransparentBackground()
-//                UITabBar.appearance().standardAppearance = appearance
-//            }
-            
-//            Spacer()
-//
-//            // Apply blur effect at the bottom when content is overlapped
-//            VisualEffectView(style: .light) // You can adjust the style as needed
-//                .frame(maxWidth: .infinity)
-//                .frame(height: 64)
-//                .opacity(0.9) // Adjust opacity as needed
-//                .alignmentGuide(.bottom) { _ in 64 } // Adjust the value to position it at the desired height from the bottom
+            }) // End TabView
         }
     }
 }
